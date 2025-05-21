@@ -8,7 +8,9 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "format": "prettier --write ."
+    "format": "prettier --write",
+    "lint:fix": "eslint . --ext .js,.jsx --fix",
+    "prepare": "husky"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.7",
@@ -26,6 +28,8 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.0.0",
     "prettier": "^3.5.3",
     "vite": "^6.3.5"
   },
@@ -33,5 +37,11 @@
   "author": {
     "name": "Andrew Ratnikov",
     "email": "ratnikov.am@gmail.com"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npm run lint:fi§x",
+      "npm run format"
+    ]
   }
 }
