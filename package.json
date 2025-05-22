@@ -43,5 +43,8 @@
       "npm run lint:fi§x",
       "npm run format"
     ]
+  },
+  "husky": {
+    "pre-commit": "lint-staged"
   }
 }
