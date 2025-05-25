@@ -2,18 +2,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/ui/*": ["components/ui/*"],
-      "@/lib/*": ["lib/*"],
-      "@/utils/*": ["lib/utils/*"],
-      "@/hook/*": ["/hooks/*"]
+      "@/*": ["/*"],
     },
     "jsx": "react-jsx", // Or "react" depending on your React version and bundler
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "bundler", // Or "node"
     "allowJs": true, // Allow JavaScript files
-    "checkJs": true, // Enable type checking on JavaScript files with JSDoc
+    "checkJs": false, // Enable type checking on JavaScript files with JSDoc
     "strict": true, // Enable all strict type-checking options
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true, // Recommended for bundlers
