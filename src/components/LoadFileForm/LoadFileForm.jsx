@@ -1,3 +1,5 @@
+import { loadFileFormSchema } from '@/src/schemas';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '../ui/button';
@@ -13,6 +15,7 @@ import { Input } from '../ui/input';
 
 export default function LoadFileForm() {
   const form = useForm({
+    resolver: zodResolver(loadFileFormSchema),
     defaultValues: {
       report: '',
     },
@@ -32,7 +35,7 @@ export default function LoadFileForm() {
               <FormLabel>Report</FormLabel>
 
               <FormControl>
-                <Input placeholder="Load report" {...field} />
+                <Input placeholder="Load report" type="file" {...field} />
               </FormControl>
 
               <FormDescription>Input Description</FormDescription>
