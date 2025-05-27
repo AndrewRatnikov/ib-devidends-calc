@@ -39,14 +39,7 @@ export default function LoadFileForm() {
               <FormLabel>Report</FormLabel>
 
               <FormControl>
-                <Input
-                  type="file"
-                  {...fileRef}
-                  // onChange={(event) => {
-                  //   console.log('event => ', event);
-                  //   fileRef.onChange(event.target.files[0]);
-                  // }}
-                />
+                <Input type="file" {...fileRef} />
               </FormControl>
               <FormMessage />
 
