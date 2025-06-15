@@ -4,6 +4,7 @@ import { Ofx } from 'ofx-data-extractor';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
 import {
   Form,
   FormControl,
@@ -25,33 +26,46 @@ export default function LoadFileForm() {
   const onSubmit = (data) => {
     Ofx.fromBlob(data.report[0])
       .then((data) => data.toJson())
-      .then((ofx) => console.log(ofx));
+      .then((ofxResponse) => {
+        console.log(ofxResponse);
+
+        // const ofx = new Ofx(ofxResponse);
+
+        // const bankTransferList = ofx.getBankTransferList();
+        // console.log(bankTransferList);
+      });
   };
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <FormField
-          control={form.control}
-          name="report"
-          render={() => (
-            <FormItem>
-              <FormLabel>Report</FormLabel>
+    <Card className="w-full max-w-2xl mx-auto mt-8">
+      <CardContent>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <FormField
+              control={form.control}
+              name="report"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Report</FormLabel>
 
-              <FormControl>
-                <Input type="file" {...fileRef} />
-              </FormControl>
-              <FormMessage />
+                  <FormControl>
+                    <Input type="file" {...fileRef} />
+                  </FormControl>
+                  <FormMessage />
 
-              <FormDescription>
-                Please load your report in ofx format
-              </FormDescription>
-            </FormItem>
-          )}
-        />
+                  <FormDescription>
+                    Please load your report in ofx format
+                  </FormDescription>
+                </FormItem>
+              )}
+            />
 
-        <Button type="submit">Load</Button>
-      </form>
-    </Form>
+            <Button type="submit" className="mt-4">
+              Load
+            </Button>
+          </form>
+        </Form>
+      </CardContent>
+    </Card>
   );
 }
