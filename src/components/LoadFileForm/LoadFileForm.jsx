@@ -1,8 +1,8 @@
 import { loadFileFormSchema } from '@/src/schemas';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Ofx } from 'ofx-data-extractor';
 import { useForm } from 'react-hook-form';
 
+import { convertOfxToJson, extractDividendsFromJson } from '../../lib/helpers';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import {
@@ -24,16 +24,25 @@ export default function LoadFileForm() {
   const fileRef = form.register('report');
 
   const onSubmit = (data) => {
-    Ofx.fromBlob(data.report[0])
-      .then((data) => data.toJson())
-      .then((ofxResponse) => {
-        console.log(ofxResponse);
+    const file = data.report[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const ofxContent = e.target.result;
 
-        // const ofx = new Ofx(ofxResponse);
-
-        // const bankTransferList = ofx.getBankTransferList();
-        // console.log(bankTransferList);
-      });
+        try {
+          const ofxJson = convertOfxToJson(ofxContent);
+          const dividends = extractDividendsFromJson(ofxJson);
+          console.log('Extracted Dividends: ', dividends);
+        } catch (error) {
+          console.error('Error processing OFX file:', error);
+        }
+      };
+      reader.onerror = (error) => {
+        console.error('Error reading file:', error);
+      };
+      reader.readAsText(file);
+    }
   };
 
   return (
@@ -49,7 +58,7 @@ export default function LoadFileForm() {
                   <FormLabel>Report</FormLabel>
 
                   <FormControl>
-                    <Input type="file" {...fileRef} />
+                    <Input type="file" {...fileRef} accept=".ofx" />
                   </FormControl>
                   <FormMessage />
 
