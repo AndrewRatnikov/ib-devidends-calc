@@ -1,7 +1,5 @@
-import { Input } from '@/src/components/ui/input';
-
-import { DividendsTable } from './components/DividendsTable';
-import { LoadFileForm } from './components/LoadFileForm';
+import { DividendsTable } from '@/src/components/DividendsTable';
+import { LoadFileForm } from '@/src/components/LoadFileForm';
 
 export default function App() {
   return (

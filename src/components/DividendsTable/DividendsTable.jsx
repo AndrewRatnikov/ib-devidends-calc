@@ -1,4 +1,4 @@
-import { useDividendsStore } from '../../store/useDividendsStore';
+import { useDividendsStore } from '@/src/store/useDividendsStore';
 
 export default function DividendsTable() {
   const fileData = useDividendsStore((s) => s.fileData);

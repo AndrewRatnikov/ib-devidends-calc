@@ -1,11 +1,11 @@
+import { Button } from '@/src/components/ui/button';
+import { Card, CardContent } from '@/src/components/ui/card';
+import { convertOfxToJson, extractDividendsFromJson } from '@/src/lib/helpers';
 import { loadFileFormSchema } from '@/src/schemas';
+import { useDividendsStore } from '@/src/store/useDividendsStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { convertOfxToJson, extractDividendsFromJson } from '../../lib/helpers';
-import { useDividendsStore } from '../../store/useDividendsStore';
-import { Button } from '../ui/button';
-import { Card, CardContent } from '../ui/card';
 import {
   Form,
   FormControl,

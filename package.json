@@ -42,6 +42,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.0.0",
     "prettier": "^3.5.3",
+    "shadcn": "^3.4.2",
     "vite": "^6.3.5"
   },
   "license": "MIT",
