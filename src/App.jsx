@@ -1,21 +1,20 @@
 import { Input } from '@/src/components/ui/input';
 
-import LoadFileForm from './components/LoadFileForm';
+import { DividendsTable } from './components/DividendsTable';
+import { LoadFileForm } from './components/LoadFileForm';
 
-function App() {
+export default function App() {
   return (
     <main>
       <div>
         <h1 className="text-5xl text-center pt-8 pb-8">
-          Tax Dividend calculator
+          Tax Dividend visualizer
         </h1>
-
-        <p className="text-center">Description</p>
       </div>
 
       <LoadFileForm />
+
+      <DividendsTable />
     </main>
   );
 }
-
-export default App;

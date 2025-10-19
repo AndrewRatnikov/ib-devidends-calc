@@ -3,6 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { convertOfxToJson, extractDividendsFromJson } from '../../lib/helpers';
+import { useDividendsStore } from '../../store/useDividendsStore';
 import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import {
@@ -17,6 +18,8 @@ import {
 import { Input } from '../ui/input';
 
 export default function LoadFileForm() {
+  const setFileData = useDividendsStore((s) => s.setFileData);
+
   const form = useForm({
     resolver: zodResolver(loadFileFormSchema),
   });
@@ -33,7 +36,7 @@ export default function LoadFileForm() {
         try {
           const ofxJson = convertOfxToJson(ofxContent);
           const dividends = extractDividendsFromJson(ofxJson);
-          console.log('Extracted Dividends: ', dividends);
+          setFileData(dividends);
         } catch (error) {
           console.error('Error processing OFX file:', error);
         }

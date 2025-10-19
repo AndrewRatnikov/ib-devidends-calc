@@ -20,11 +20,9 @@ export function extractDividendsFromJson(ofxJson) {
     const invTranList =
       ofxJson?.OFX?.INVSTMTMSGSRSV1?.INVSTMTTRNRS?.INVSTMTRS?.INVTRANLIST;
 
-    // Check if INVTRANLIST exists and has an INCOME property
     if (invTranList && invTranList.INCOME) {
       const incomeData = invTranList.INCOME;
 
-      // Ensure incomeData is an array if there are multiple, or treat as single object
       const incomeTransactions = Array.isArray(incomeData)
         ? incomeData
         : [incomeData];
@@ -33,7 +31,7 @@ export function extractDividendsFromJson(ofxJson) {
         if (incomeTran.INCOMETYPE === 'DIV') {
           const dividend = {
             id: incomeTran.INVTRAN?.FITID || 'N/A',
-            date: incomeTran.INVTRAN?.DTTRADE || 'N/A', // Changed from DTPOSTED to DTTRADE based on your JSON
+            date: incomeTran.INVTRAN?.DTTRADE || 'N/A',
             amount: parseFloat(incomeTran.TOTAL) || 0,
             description: incomeTran.INVTRAN?.MEMO || 'Dividend',
             securityId: incomeTran.SECID?.UNIQUEID || 'N/A',

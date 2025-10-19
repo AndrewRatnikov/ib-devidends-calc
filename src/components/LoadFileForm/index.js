@@ -1,1 +1,1 @@
-export { default } from './LoadFileForm.jsx';
+export { default as LoadFileForm } from './LoadFileForm.jsx';
