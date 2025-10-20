@@ -9,9 +9,10 @@
  * - ticker: Ticker symbol of the security
  * - description: Description of the transaction (MEMO)
  * - dividendPerShare: The dividend price per one share
- * - amount: Dividend amount (TOTAL)
+ * - total: Dividend amount (TOTAL)
  * - currencySymbol: Symbol of the currency (CURSYM)
  * - tax: The tax amount for the dividend
+ * - numberOfShares: The number of shares.
  */
 export function extractDividendsFromJson(ofxJson) {
   const dividends = [];
@@ -25,8 +26,8 @@ export function extractDividendsFromJson(ofxJson) {
       const invBankTrans = Array.isArray(invTranList.INVBANKTRAN)
         ? invTranList.INVBANKTRAN
         : invTranList.INVBANKTRAN
-        ? [invTranList.INVBANKTRAN]
-        : [];
+          ? [invTranList.INVBANKTRAN]
+          : [];
 
       invBankTrans.forEach((trans) => {
         const memo = trans.STMTTRN?.MEMO;
@@ -46,8 +47,8 @@ export function extractDividendsFromJson(ofxJson) {
       const incomeTransactions = Array.isArray(incomeData)
         ? incomeData
         : incomeData
-        ? [incomeData]
-        : [];
+          ? [incomeData]
+          : [];
 
       incomeTransactions.forEach((incomeTran) => {
         if (incomeTran.INCOMETYPE === 'DIV') {
@@ -55,23 +56,33 @@ export function extractDividendsFromJson(ofxJson) {
           const date = incomeTran.INVTRAN?.DTTRADE || 'N/A';
           const cusip = incomeTran.SECID?.UNIQUEID || null;
           const dateKey = date.substring(0, 8);
-          const tax = cusip && dateKey ? taxData.get(`${cusip}_${dateKey}`) || 0 : 0;
+          const tax =
+            cusip && dateKey ? taxData.get(`${cusip}_${dateKey}`) || 0 : 0;
 
           const tickerMatch = description.match(/^([A-Z]+)/);
           const ticker = tickerMatch ? tickerMatch[1] : 'N/A';
 
-          const dividendPerShareMatch = description.match(/USD ([\d.]+) PER SHARE/);
-          const dividendPerShare = dividendPerShareMatch ? parseFloat(dividendPerShareMatch[1]) : 0;
+          const dividendPerShareMatch = description.match(
+            /USD ([\d.]+) PER SHARE/,
+          );
+          const dividendPerShare = dividendPerShareMatch
+            ? parseFloat(dividendPerShareMatch[1])
+            : 0;
+
+          const total = parseFloat(incomeTran.TOTAL) || 0;
+          const numberOfShares =
+            dividendPerShare > 0 ? total / dividendPerShare : 0;
 
           const dividend = {
             id: incomeTran.INVTRAN?.FITID || 'N/A',
-            date: date,
-            ticker: ticker,
-            description: description,
-            dividendPerShare: dividendPerShare,
-            amount: parseFloat(incomeTran.TOTAL) || 0,
+            date,
+            ticker,
+            description,
+            dividendPerShare,
+            total,
             currencySymbol: incomeTran.CURRENCY?.CURSYM || 'N/A',
-            tax: tax,
+            tax,
+            numberOfShares,
           };
           dividends.push(dividend);
         }
