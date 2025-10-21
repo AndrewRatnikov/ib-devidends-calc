@@ -1,5 +1,6 @@
 import { DividendsTable } from '@/src/components/DividendsTable';
 import { LoadFileForm } from '@/src/components/LoadFileForm';
+import React from 'react';
 
 export default function App() {
   return (

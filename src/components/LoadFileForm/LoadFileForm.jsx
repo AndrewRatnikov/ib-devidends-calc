@@ -4,6 +4,7 @@ import { convertOfxToJson, extractDividendsFromJson } from '@/src/lib/helpers';
 import { loadFileFormSchema } from '@/src/schemas';
 import { useDividendsStore } from '@/src/store/useDividendsStore';
 import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
 import { useForm } from 'react-hook-form';
 
 import {
