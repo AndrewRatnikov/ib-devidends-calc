@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 /**
  * Extracts dividend data from a parsed OFX JSON object.
  *
@@ -197,43 +199,34 @@ export function xmlToJson(xml) {
   return obj;
 }
 
+const DATE_FORMAT = 'YYYYMMDD';
+
 /**
  * Calculates the date range from a list of dividend transactions.
  *
  * @param {Array<Object>} fileData An array of dividend objects, each with a 'date' property.
- * @returns {Array<string|null>} An array containing the start and end date strings [start, end], or an empty array if no dates are found.
+ * @returns {{startDate: string, endDate: string} | null} An object containing the start and end date, or null if no dates are found.
  */
 export function getDateRangeFromFileData(fileData) {
   if (!fileData || fileData.length === 0) {
-    return [];
+    return null;
   }
 
-  let minDateStr = fileData[0].date;
-  let maxDateStr = fileData[0].date;
+  const dates = fileData.map((item) =>
+    dayjs(item.date.substring(0, 8), DATE_FORMAT),
+  );
 
-  for (const item of fileData) {
-    if (item.date < minDateStr) {
-      minDateStr = item.date;
-    }
-    if (item.date > maxDateStr) {
-      maxDateStr = item.date;
-    }
-  }
+  const minDate = dates.reduce(
+    (min, current) => (current.isBefore(min) ? current : min),
+    dates[0],
+  );
+  const maxDate = dates.reduce(
+    (max, current) => (current.isAfter(max) ? current : max),
+    dates[0],
+  );
 
-  const formatDate = (dateStr) => {
-    if (!dateStr || dateStr.length < 8) return null;
-    const year = dateStr.substring(0, 4);
-    const month = dateStr.substring(4, 6);
-    const day = dateStr.substring(6, 8);
-    return `${year}-${month}-${day}`;
-  };
+  const startDate = minDate.format(DATE_FORMAT);
+  const endDate = maxDate.format(DATE_FORMAT);
 
-  const startDate = formatDate(minDateStr);
-  const endDate = formatDate(maxDateStr);
-
-  if (startDate && endDate) {
-    return [startDate, endDate];
-  }
-
-  return [];
+  return { startDate, endDate };
 }
