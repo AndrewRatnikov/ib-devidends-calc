@@ -2,22 +2,22 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["/*"],
+      "@/*": ["src/*"]
     },
-    "jsx": "react-jsx", // Or "react" depending on your React version and bundler
+    "jsx": "react-jsx",
     "target": "es2020",
     "module": "esnext",
-    "moduleResolution": "bundler", // Or "node"
-    "allowJs": true, // Allow JavaScript files
-    "checkJs": false, // Enable type checking on JavaScript files with JSDoc
-    "strict": true, // Enable all strict type-checking options
+    "moduleResolution": "node",
+    "allowJs": true,
+    "checkJs": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true, // Recommended for bundlers
+    "isolatedModules": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "noEmit": true // No actual compilation, just for language service
+    "noEmit": true
   },
-  "include": ["./**/*.js", "./**/*.jsx"], // Files to include in the project
-  "exclude": ["node_modules", "**/node_modules", ".next", "dist"] // Files/folders to exclude
+  "include": ["src/**/*", "**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".next", "dist"]
 }

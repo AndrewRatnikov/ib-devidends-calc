@@ -196,3 +196,44 @@ export function xmlToJson(xml) {
 
   return obj;
 }
+
+/**
+ * Calculates the date range from a list of dividend transactions.
+ *
+ * @param {Array<Object>} fileData An array of dividend objects, each with a 'date' property.
+ * @returns {Array<string|null>} An array containing the start and end date strings [start, end], or an empty array if no dates are found.
+ */
+export function getDateRangeFromFileData(fileData) {
+  if (!fileData || fileData.length === 0) {
+    return [];
+  }
+
+  let minDateStr = fileData[0].date;
+  let maxDateStr = fileData[0].date;
+
+  for (const item of fileData) {
+    if (item.date < minDateStr) {
+      minDateStr = item.date;
+    }
+    if (item.date > maxDateStr) {
+      maxDateStr = item.date;
+    }
+  }
+
+  const formatDate = (dateStr) => {
+    if (!dateStr || dateStr.length < 8) return null;
+    const year = dateStr.substring(0, 4);
+    const month = dateStr.substring(4, 6);
+    const day = dateStr.substring(6, 8);
+    return `${year}-${month}-${day}`;
+  };
+
+  const startDate = formatDate(minDateStr);
+  const endDate = formatDate(maxDateStr);
+
+  if (startDate && endDate) {
+    return [startDate, endDate];
+  }
+
+  return [];
+}
