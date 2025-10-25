@@ -1,4 +1,5 @@
 import { Table, TableCaption } from '@/components/ui/table';
+import useFetchCurrencyExchange from '@/hooks/useFetchCurrencyExchange';
 import { getDateRangeFromFileData } from '@/lib/helpers';
 import { useDividendsStore } from '@/store/useDividendsStore';
 import React from 'react';
@@ -9,11 +10,24 @@ export default function DividendsTable() {
   const fileData = useDividendsStore((s) => s.fileData);
 
   const dateRange = getDateRangeFromFileData(fileData);
-  console.log('DividendsTable dateRange: ', dateRange);
 
   console.log('DividendsTable fileData: ', fileData);
 
-  if (!fileData || !fileData.length) {
+  const {
+    data: currencyExchangeData,
+    isLoading,
+    isError,
+  } = useFetchCurrencyExchange(dateRange ?? {});
+
+  console.log('currencyExchangeData: ', currencyExchangeData);
+
+  if (
+    !fileData ||
+    !fileData.length ||
+    dateRange === null ||
+    isLoading ||
+    isError
+  ) {
     return null;
   }
 

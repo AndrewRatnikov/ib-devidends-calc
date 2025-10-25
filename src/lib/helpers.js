@@ -34,14 +34,9 @@ export function extractDividendsFromJson(ofxJson) {
       invBankTrans.forEach((trans) => {
         const memo = trans.STMTTRN?.MEMO;
         if (memo && memo.includes('CASH DIVIDEND') && memo.includes('US TAX')) {
-          const cusipMatch = memo.match(/\((US)?([A-Z0-9]+)\)/);
-          const cusip = cusipMatch ? cusipMatch[2] : null;
-          const date = trans.STMTTRN?.DTPOSTED?.substring(0, 8);
+          const key = memo.replace(' - US TAX', '');
           const taxAmount = parseFloat(trans.STMTTRN?.TRNAMT) || 0;
-
-          if (cusip && date) {
-            taxData.set(`${cusip}_${date}`, taxAmount);
-          }
+          taxData.set(key, taxAmount);
         }
       });
 
@@ -55,11 +50,10 @@ export function extractDividendsFromJson(ofxJson) {
       incomeTransactions.forEach((incomeTran) => {
         if (incomeTran.INCOMETYPE === 'DIV') {
           const description = incomeTran.INVTRAN?.MEMO || 'Dividend';
+          const key = description.replace(' (Ordinary Dividend)', '');
+          const tax = taxData.get(key) || 0;
+
           const date = incomeTran.INVTRAN?.DTTRADE || 'N/A';
-          const cusip = incomeTran.SECID?.UNIQUEID || null;
-          const dateKey = date.substring(0, 8);
-          const tax =
-            cusip && dateKey ? taxData.get(`${cusip}_${dateKey}`) || 0 : 0;
 
           const tickerMatch = description.match(/^([A-Z]+)/);
           const ticker = tickerMatch ? tickerMatch[1] : 'N/A';

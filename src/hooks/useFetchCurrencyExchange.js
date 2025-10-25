@@ -1,18 +1,26 @@
 import fetchCurrencyExchange from '@/api/fetchCurrencyExchange';
 import { useEffect, useState } from 'react';
 
-export const useFetchCurrencyExchange = ({ fromDate, toDate, currency }) => {
+export const useFetchCurrencyExchange = ({ startDate, endDate, currency }) => {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!startDate || !endDate) {
+        return;
+      }
+
       try {
         setIsLoading(true);
         setIsError(false);
 
-        const result = await fetchCurrencyExchange(fromDate, toDate, currency);
+        const result = await fetchCurrencyExchange(
+          startDate,
+          endDate,
+          currency,
+        );
         setData(result);
       } catch {
         setIsError(true);
@@ -22,7 +30,7 @@ export const useFetchCurrencyExchange = ({ fromDate, toDate, currency }) => {
     };
 
     fetchData();
-  }, [fromDate, toDate, currency]);
+  }, [startDate, endDate, currency]);
 
   return { data, isLoading, isError };
 };
