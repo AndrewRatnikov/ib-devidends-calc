@@ -3,7 +3,7 @@ export default async function fetchCurrencyExchange(
   toDate,
   currency = 'USD',
 ) {
-  const url = `https://bank.gov.ua/NBU_Exchange/exchange_site?start=${fromDate}&end=${toDate}&valcode=${currency}&sort=exchangedate&order=desc&json`;
+  const url = `/api?start=${fromDate}&end=${toDate}&valcode=${currency}&sort=exchangedate&order=desc&json`;
 
   try {
     const data = await fetch(url);
