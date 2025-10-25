@@ -1,33 +1,26 @@
 import { Table, TableCaption } from '@/components/ui/table';
 import useFetchCurrencyExchange from '@/hooks/useFetchCurrencyExchange';
+import useHydratedDividends from '@/hooks/useHydratedDividends';
 import { getDateRangeFromFileData } from '@/lib/helpers';
 import { useDividendsStore } from '@/store/useDividendsStore';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import DividendsTableHeader from './DividendsTableHeader';
 
 export default function DividendsTable() {
   const fileData = useDividendsStore((s) => s.fileData);
 
-  const dateRange = getDateRangeFromFileData(fileData);
+  const { startDate, endDate } = useMemo(
+    () => getDateRangeFromFileData(fileData) || {},
+    [fileData],
+  );
 
-  console.log('DividendsTable fileData: ', fileData);
+  const { data: currencyExchangeData, isLoading, isError } =
+    useFetchCurrencyExchange({ startDate, endDate });
 
-  const {
-    data: currencyExchangeData,
-    isLoading,
-    isError,
-  } = useFetchCurrencyExchange(dateRange ?? {});
+  const hydratedFileData = useHydratedDividends(fileData, currencyExchangeData);
 
-  console.log('currencyExchangeData: ', currencyExchangeData);
-
-  if (
-    !fileData ||
-    !fileData.length ||
-    dateRange === null ||
-    isLoading ||
-    isError
-  ) {
+  if (!hydratedFileData || !hydratedFileData.length || isLoading || isError) {
     return null;
   }
 
