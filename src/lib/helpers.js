@@ -66,19 +66,16 @@ export function extractDividendsFromJson(ofxJson) {
             : 0;
 
           const total = parseFloat(incomeTran.TOTAL) || 0;
-          const numberOfShares =
-            dividendPerShare > 0 ? total / dividendPerShare : 0;
 
           const dividend = {
             id: incomeTran.INVTRAN?.FITID || 'N/A',
-            date,
+            date: dayjs(date.substring(0, 8), 'YYYYMMDD').format('YYYY-MM-DD'),
             ticker,
             description,
             dividendPerShare,
             total,
             currencySymbol: incomeTran.CURRENCY?.CURSYM || 'N/A',
             tax,
-            numberOfShares,
           };
           dividends.push(dividend);
         }
@@ -206,9 +203,7 @@ export function getDateRangeFromFileData(fileData) {
     return null;
   }
 
-  const dates = fileData.map((item) =>
-    dayjs(item.date.substring(0, 8), DATE_FORMAT),
-  );
+  const dates = fileData.map((item) => dayjs(item.date, DATE_FORMAT));
 
   const minDate = dates.reduce(
     (min, current) => (current.isBefore(min) ? current : min),

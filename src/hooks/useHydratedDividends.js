@@ -1,5 +1,8 @@
-import { useMemo } from 'react';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import { useMemo } from 'react';
+
+dayjs.extend(customParseFormat);
 
 /**
  * A custom hook to hydrate dividend data with currency exchange rates.
@@ -14,7 +17,7 @@ export const useHydratedDividends = (fileData, currencyExchangeData) => {
     }
     return currencyExchangeData.reduce((acc, item) => {
       const date = dayjs(item.exchangedate, 'DD.MM.YYYY').format('YYYY-MM-DD');
-      acc.set(date, item.rate);
+      acc.set(date, item.rate_per_unit);
       return acc;
     }, new Map());
   }, [currencyExchangeData]);
@@ -24,11 +27,8 @@ export const useHydratedDividends = (fileData, currencyExchangeData) => {
       return fileData; // Return original data if no exchange rates
     }
     return fileData.map((item) => {
-      const date = dayjs(item.date.substring(0, 8), 'YYYYMMDD').format(
-        'YYYY-MM-DD',
-      );
       // Default to 1 if no exchange rate is found for the given date.
-      const exchangeRate = exchangeRatesByDate.get(date) || 1;
+      const exchangeRate = exchangeRatesByDate.get(item.date) || 1;
       return { ...item, curExchange: exchangeRate };
     });
   }, [fileData, exchangeRatesByDate]);
