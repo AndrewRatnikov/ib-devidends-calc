@@ -1,4 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table';
+import { formatNumber } from '@/lib/formatters';
 import React from 'react';
 
 export default function DividendsTableRow({ data }) {
@@ -15,17 +16,17 @@ export default function DividendsTableRow({ data }) {
     <TableRow>
       <TableCell>{date}</TableCell>
       <TableCell>{ticker}</TableCell>
-      <TableCell>{dividendPerShare}</TableCell>
+      <TableCell>{formatNumber(dividendPerShare)}</TableCell>
       <TableCell>{Math.round(total / dividendPerShare)}</TableCell>
       <TableCell>{total}</TableCell>
       <TableCell>{absTax}</TableCell>
-      <TableCell>{income}</TableCell>
-      <TableCell>{curExchange}</TableCell>
-      <TableCell>{localIncome}</TableCell>
-      <TableCell>{pit}</TableCell>
-      <TableCell>{militaryTax}</TableCell>
-      <TableCell>{totalTax}</TableCell>
-      <TableCell>{netIncome}</TableCell>
+      <TableCell>{formatNumber(income)}</TableCell>
+      <TableCell>{formatNumber(curExchange)}</TableCell>
+      <TableCell>{formatNumber(localIncome)}</TableCell>
+      <TableCell>{formatNumber(pit)}</TableCell>
+      <TableCell>{formatNumber(militaryTax)}</TableCell>
+      <TableCell>{formatNumber(totalTax)}</TableCell>
+      <TableCell>{formatNumber(netIncome)}</TableCell>
     </TableRow>
   );
 }

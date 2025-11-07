@@ -14,3 +14,11 @@ export function getCurrencySymbol(currencyCode) {
       return currencyCode;
   }
 }
+
+/**
+ * Formats a number to a string with 2 decimal places.
+ *
+ * @param {number} num The number to format.
+ * @returns {string} The formatted number.
+ */
+export const formatNumber = (num) => (num ? num.toFixed(2) : num);
