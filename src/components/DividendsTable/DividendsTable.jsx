@@ -1,4 +1,5 @@
 import { Table, TableBody, TableCaption } from '@/components/ui/table';
+import useDividendsSummary from '@/hooks/useDividendsSummary';
 import useFetchCurrencyExchange from '@/hooks/useFetchCurrencyExchange';
 import useHydratedDividends from '@/hooks/useHydratedDividends';
 import { getDateRangeFromFileData } from '@/lib/helpers';
@@ -7,6 +8,7 @@ import React, { useMemo } from 'react';
 
 import DividendsTableHeader from './DividendsTableHeader';
 import DividendsTableRow from './DividendsTableRow';
+import DividendsTableSummaryRow from './DividendsTableSummaryRow';
 
 export default function DividendsTable() {
   const fileData = useDividendsStore((s) => s.fileData);
@@ -23,12 +25,11 @@ export default function DividendsTable() {
   } = useFetchCurrencyExchange({ startDate, endDate });
 
   const hydratedFileData = useHydratedDividends(fileData, currencyExchangeData);
+  const summary = useDividendsSummary(hydratedFileData);
 
   if (!hydratedFileData || !hydratedFileData.length || isLoading || isError) {
     return null;
   }
-
-  console.log('Hydrated Dividends: ', hydratedFileData);
 
   return (
     <Table className="mt-5">
@@ -41,6 +42,7 @@ export default function DividendsTable() {
           <DividendsTableRow key={dividend.id} data={dividend} />
         ))}
       </TableBody>
+      <DividendsTableSummaryRow summary={summary} />
     </Table>
   );
 }
