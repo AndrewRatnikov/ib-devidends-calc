@@ -14,7 +14,7 @@ export default function DividendsTableSummaryRow({ summary }) {
         <TableCell>{formatNumber(summary.total)}</TableCell>
         <TableCell>{formatNumber(summary.tax)}</TableCell>
         <TableCell>{formatNumber(summary.income)}</TableCell>
-        <TableCell></TableCell> {/* curExchange */}
+        <TableCell>{/* curExchange */}</TableCell>
         <TableCell>{formatNumber(summary.localIncome)}</TableCell>
         <TableCell>{formatNumber(summary.pit)}</TableCell>
         <TableCell>{formatNumber(summary.militaryTax)}</TableCell>

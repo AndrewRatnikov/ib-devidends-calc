@@ -21,4 +21,5 @@ export function getCurrencySymbol(currencyCode) {
  * @param {number} num The number to format.
  * @returns {string} The formatted number.
  */
-export const formatNumber = (num) => (num ? num.toFixed(2) : num);
+export const formatNumber = (num) =>
+  typeof num === 'number' && !isNaN(num) ? num.toFixed(2) : '0.00';

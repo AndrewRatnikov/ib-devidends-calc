@@ -3,7 +3,7 @@ import { formatNumber } from '@/lib/formatters';
 import React from 'react';
 
 export default function DividendsTableRow({ data }) {
-  const { date, ticker, dividendPerShare, total, tax, curExchange } = data;
+  const { date, ticker, dividendPerShare, total, tax, curExchange = 0 } = data;
   const absTax = Math.abs(tax);
   const income = total - absTax;
   const localIncome = income * curExchange;
