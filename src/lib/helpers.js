@@ -33,7 +33,11 @@ export function extractDividendsFromJson(ofxJson) {
 
       invBankTrans.forEach((trans) => {
         const memo = trans.STMTTRN?.MEMO;
-        if (memo && memo.includes('CASH DIVIDEND') && memo.includes('US TAX')) {
+        if (
+          memo &&
+          memo.toUpperCase().includes('CASH DIVIDEND') &&
+          memo.includes('US TAX')
+        ) {
           const key = memo.replace(' - US TAX', '');
           const taxAmount = parseFloat(trans.STMTTRN?.TRNAMT) || 0;
           taxData.set(key, taxAmount);
@@ -50,7 +54,9 @@ export function extractDividendsFromJson(ofxJson) {
       incomeTransactions.forEach((incomeTran) => {
         if (incomeTran.INCOMETYPE === 'DIV') {
           const description = incomeTran.INVTRAN?.MEMO || 'Dividend';
-          const key = description.replace(' (Ordinary Dividend)', '');
+          const key = description
+            .replace(' (Ordinary Dividend)', '')
+            .replace(' per Share', '');
           const tax = taxData.get(key) || 0;
 
           const date = incomeTran.INVTRAN?.DTTRADE || 'N/A';
@@ -59,7 +65,7 @@ export function extractDividendsFromJson(ofxJson) {
           const ticker = tickerMatch ? tickerMatch[1] : 'N/A';
 
           const dividendPerShareMatch = description.match(
-            /USD ([\d.]+) PER SHARE/,
+            /USD ([\d.]+) per Share/i,
           );
           const dividendPerShare = dividendPerShareMatch
             ? parseFloat(dividendPerShareMatch[1])
