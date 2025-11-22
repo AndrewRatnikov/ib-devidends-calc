@@ -6,6 +6,7 @@ import { useDividendsStore } from '@/store/useDividendsStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import {
   Form,
@@ -38,12 +39,17 @@ export default function LoadFileForm() {
           const ofxJson = convertOfxToJson(ofxContent);
           const dividends = extractDividendsFromJson(ofxJson);
           setFileData(dividends);
+          toast.success('File loaded successfully');
         } catch (error) {
           console.error('Error processing OFX file:', error);
+          toast.error(
+            'Failed to process OFX file. Please check the file format.',
+          );
         }
       };
       reader.onerror = (error) => {
         console.error('Error reading file:', error);
+        toast.error('Failed to read file');
       };
       reader.readAsText(file);
     }

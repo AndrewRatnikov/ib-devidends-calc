@@ -1,5 +1,6 @@
 import { DividendsTable } from '@/components/DividendsTable';
 import { LoadFileForm } from '@/components/LoadFileForm';
+import { Toaster } from '@/components/ui/sonner';
 import React from 'react';
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
       <LoadFileForm />
 
       <DividendsTable />
+      <Toaster />
     </main>
   );
 }

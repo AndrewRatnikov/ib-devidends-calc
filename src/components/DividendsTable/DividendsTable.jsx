@@ -4,7 +4,8 @@ import useFetchCurrencyExchange from '@/hooks/useFetchCurrencyExchange';
 import useHydratedDividends from '@/hooks/useHydratedDividends';
 import { getDateRangeFromFileData } from '@/lib/helpers';
 import { useDividendsStore } from '@/store/useDividendsStore';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
 
 import DividendsTableHeader from './DividendsTableHeader';
 import DividendsTableRow from './DividendsTableRow';
@@ -27,7 +28,17 @@ export default function DividendsTable() {
   const hydratedFileData = useHydratedDividends(fileData, currencyExchangeData);
   const summary = useDividendsSummary(hydratedFileData);
 
-  if (!hydratedFileData || !hydratedFileData.length || isLoading || isError) {
+  useEffect(() => {
+    if (isError) {
+      toast.error('Failed to fetch currency exchange rates');
+    }
+  }, [isError]);
+
+  if (isLoading) {
+    return <div className="text-center py-10">Loading currency data...</div>;
+  }
+
+  if (!hydratedFileData || !hydratedFileData.length || isError) {
     return null;
   }
 
