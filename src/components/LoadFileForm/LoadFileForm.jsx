@@ -1,4 +1,8 @@
 import { Button } from '@/components/ui/button';
+import {
+  ButtonGroup,
+  ButtonGroupSeparator,
+} from '@/components/ui/button-group';
 import { Card, CardContent } from '@/components/ui/card';
 import { convertOfxToJson, extractDividendsFromJson } from '@/lib/helpers';
 import { loadFileFormSchema } from '@/schemas';
@@ -21,6 +25,7 @@ import { Input } from '../ui/input';
 
 export default function LoadFileForm() {
   const setFileData = useDividendsStore((s) => s.setFileData);
+  const clearFileData = useDividendsStore((s) => s.clearFileData);
 
   const form = useForm({
     resolver: zodResolver(loadFileFormSchema),
@@ -55,6 +60,11 @@ export default function LoadFileForm() {
     }
   };
 
+  const handleClear = () => {
+    form.reset();
+    clearFileData();
+  };
+
   return (
     <Card className="w-full max-w-2xl mx-auto mt-8">
       <CardContent>
@@ -79,9 +89,13 @@ export default function LoadFileForm() {
               )}
             />
 
-            <Button type="submit" className="mt-4">
-              Load
-            </Button>
+            <ButtonGroup className="mt-4">
+              <Button type="submit">Load</Button>
+              <ButtonGroupSeparator />
+              <Button type="button" onClick={handleClear}>
+                Clear
+              </Button>
+            </ButtonGroup>
           </form>
         </Form>
       </CardContent>
