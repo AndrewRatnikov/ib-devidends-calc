@@ -1,5 +1,5 @@
 import fetchCurrencyExchange from '@/api/fetchCurrencyExchange';
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 
 /**
  * Custom hook to fetch currency exchange data based on date range and currency.
@@ -24,37 +24,15 @@ import { useEffect, useState } from 'react';
  * @returns {Object} An object containing the fetched data, loading state, and error state.
  */
 export const useFetchCurrencyExchange = ({ startDate, endDate, currency }) => {
-  const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState(false);
+  const promise = useMemo(() => {
+    if (!startDate || !endDate) {
+      return Promise.resolve(null);
+    }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!startDate || !endDate) {
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        setIsError(false);
-
-        const result = await fetchCurrencyExchange(
-          startDate,
-          endDate,
-          currency,
-        );
-        setData(result);
-      } catch {
-        setIsError(true);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
+    return fetchCurrencyExchange(startDate, endDate, currency);
   }, [startDate, endDate, currency]);
 
-  return { data, isLoading, isError };
+  return promise;
 };
 
 export default useFetchCurrencyExchange;
