@@ -1,7 +1,9 @@
+import { useFetchCurrencyExchange } from '@/hooks/useFetchCurrencyExchange';
 import { getDateRangeFromFileData } from '@/lib/helpers';
 import { useDividendsStore } from '@/store/useDividendsStore';
 import React, { Suspense, useMemo } from 'react';
 
+import CurrencyDataLoading from './CurrencyDataLoading';
 import DividendsTableContent from './DividendsTableContent';
 
 export default function DividendsTable() {
@@ -15,7 +17,7 @@ export default function DividendsTable() {
   const promise = useFetchCurrencyExchange({ startDate, endDate });
 
   return (
-    <Suspense fallback={<div className="text-center py-10">Loading...</div>}>
+    <Suspense fallback={<CurrencyDataLoading />}>
       <DividendsTableContent promise={promise} fileData={fileData} />
     </Suspense>
   );
