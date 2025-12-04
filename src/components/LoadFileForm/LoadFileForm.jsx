@@ -3,15 +3,14 @@ import {
   ButtonGroup,
   ButtonGroupSeparator,
 } from '@/components/ui/button-group';
-import { Card, CardContent } from '@/components/ui/card';
-import { convertOfxToJson, extractDividendsFromJson } from '@/lib/helpers';
-import { loadFileFormSchema } from '@/schemas';
-import { useDividendsStore } from '@/store/useDividendsStore';
-import { zodResolver } from '@hookform/resolvers/zod';
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -20,10 +19,21 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '../ui/form';
-import { Input } from '../ui/input';
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { convertOfxToJson, extractDividendsFromJson } from '@/lib/helpers';
+import { loadFileFormSchema } from '@/schemas';
+import { useDividendsStore } from '@/store/useDividendsStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { UploadIcon } from 'lucide-react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 export default function LoadFileForm() {
+  const [open, setOpen] = React.useState(false);
+  const fileData = useDividendsStore((s) => s.fileData);
+  const fileMetadata = useDividendsStore((s) => s.fileMetadata);
   const setFileData = useDividendsStore((s) => s.setFileData);
   const clearFileData = useDividendsStore((s) => s.clearFileData);
 
@@ -43,8 +53,14 @@ export default function LoadFileForm() {
         try {
           const ofxJson = convertOfxToJson(ofxContent);
           const dividends = extractDividendsFromJson(ofxJson);
-          setFileData(dividends);
+          const metadata = {
+            name: file.name,
+            size: file.size,
+            lastModified: file.lastModified,
+          };
+          setFileData(dividends, metadata);
           toast.success('File loaded successfully');
+          setOpen(false);
         } catch (error) {
           console.error('Error processing OFX file:', error);
           toast.error(
@@ -66,10 +82,22 @@ export default function LoadFileForm() {
   };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto mt-8">
-      <CardContent>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="flex items-center gap-2">
+          {fileData ? 'Edit' : 'Load report'} <UploadIcon />
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[525px]">
+        <DialogHeader>
+          <DialogTitle>Load Report</DialogTitle>
+          <DialogDescription>
+            Upload your dividend report in OFX format to visualize your tax
+            data.
+          </DialogDescription>
+        </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
               name="report"
@@ -83,13 +111,19 @@ export default function LoadFileForm() {
                   <FormMessage />
 
                   <FormDescription>
-                    Please load your report in ofx format
+                    {fileMetadata ? (
+                      <span className="text-sm">
+                        Currently loaded: <strong>{fileMetadata.name}</strong>
+                      </span>
+                    ) : (
+                      'Please load your report in ofx format'
+                    )}
                   </FormDescription>
                 </FormItem>
               )}
             />
 
-            <ButtonGroup className="mt-4">
+            <ButtonGroup>
               <Button type="submit">Load</Button>
               <ButtonGroupSeparator />
               <Button type="button" onClick={handleClear}>
@@ -98,7 +132,7 @@ export default function LoadFileForm() {
             </ButtonGroup>
           </form>
         </Form>
-      </CardContent>
-    </Card>
+      </DialogContent>
+    </Dialog>
   );
 }
