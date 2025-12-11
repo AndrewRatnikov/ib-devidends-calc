@@ -225,3 +225,79 @@ export function getDateRangeFromFileData(fileData) {
 
   return { startDate, endDate };
 }
+
+/**
+ * Calculates key performance indicators from dividend data.
+ *
+ * @param {Array<Object>} fileData An array of dividend objects, each with 'total' and 'tax' properties.
+ * @returns {{totalGross: number, taxWithheld: number, netIncome: number, topPayer: string}} KPI metrics for the dashboard.
+ */
+export function calculateKPIMetrics(fileData) {
+  if (!fileData || fileData.length === 0) {
+    return {
+      totalGross: 0,
+      taxWithheld: 0,
+      netIncome: 0,
+      topPayer: 'N/A',
+    };
+  }
+
+  // Calculate total gross dividends
+  const totalGross = fileData.reduce((sum, item) => sum + (item.total || 0), 0);
+
+  // Calculate total tax withheld (absolute value since tax is negative)
+  const taxWithheld = fileData.reduce(
+    (sum, item) => sum + Math.abs(item.tax || 0),
+    0,
+  );
+
+  // Calculate net income
+  const netIncome = totalGross - taxWithheld;
+
+  // Find top payer by ticker
+  const tickerTotals = fileData.reduce((acc, item) => {
+    if (item.ticker && item.ticker !== 'N/A') {
+      acc[item.ticker] = (acc[item.ticker] || 0) + (item.total || 0);
+    }
+    return acc;
+  }, {});
+
+  const topPayer =
+    Object.keys(tickerTotals).length > 0
+      ? Object.keys(tickerTotals).reduce((a, b) =>
+          tickerTotals[a] > tickerTotals[b] ? a : b,
+        )
+      : 'N/A';
+
+  return {
+    totalGross,
+    taxWithheld,
+    netIncome,
+    topPayer,
+  };
+}
+
+/**
+ * Groups dividend transactions by month and aggregates their totals.
+ *
+ * @param {Array<Object>} fileData An array of dividend objects, each with 'date' and 'total' properties.
+ * @returns {Array<Object>} An array of objects with 'month' (YYYY-MM format) and 'total' (sum of dividends for that month).
+ */
+export function groupDividendsByMonth(fileData) {
+  if (!fileData || fileData.length === 0) {
+    return [];
+  }
+
+  const monthlyData = fileData.reduce((acc, item) => {
+    if (item.date) {
+      const month = dayjs(item.date).format('YYYY-MM');
+      acc[month] = (acc[month] || 0) + (item.total || 0);
+    }
+    return acc;
+  }, {});
+
+  // Convert to array and sort by month
+  return Object.entries(monthlyData)
+    .map(([month, total]) => ({ month, total }))
+    .sort((a, b) => a.month.localeCompare(b.month));
+}
