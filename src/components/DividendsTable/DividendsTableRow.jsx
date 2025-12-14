@@ -17,7 +17,7 @@ export default function DividendsTableRow({ data }) {
       <TableCell>{date}</TableCell>
       <TableCell>{ticker}</TableCell>
       <TableCell>{formatNumber(dividendPerShare)}</TableCell>
-      <TableCell>{Math.round(total / dividendPerShare)}</TableCell>
+      <TableCell>{dividendPerShare ? Math.round(total / dividendPerShare) : 0}</TableCell>
       <TableCell>{total}</TableCell>
       <TableCell>{absTax}</TableCell>
       <TableCell>{formatNumber(income)}</TableCell>
