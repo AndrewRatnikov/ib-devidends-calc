@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { calculateTaxes } from '@/lib/taxCalculations';
 
 export const useDividendsSummary = (hydratedFileData) => {
   const summary = useMemo(() => {
@@ -7,13 +8,8 @@ export const useDividendsSummary = (hydratedFileData) => {
     }
     return hydratedFileData.reduce(
       (acc, item) => {
-        const absTax = Math.abs(item.tax);
-        const income = item.total - absTax;
-        const localIncome = income * item.curExchange;
-        const pit = localIncome * 0.09;
-        const militaryTax = localIncome * 0.05;
-        const totalTax = pit + militaryTax;
-        const netIncome = localIncome - totalTax;
+        const { absTax, income, localIncome, pit, militaryTax, totalTax, netIncome } =
+          calculateTaxes(item);
 
         acc.total += item.total;
         acc.tax += absTax;

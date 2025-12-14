@@ -1,16 +1,12 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { formatNumber } from '@/lib/formatters';
+import { calculateTaxes } from '@/lib/taxCalculations';
 import React from 'react';
 
 export default function DividendsTableRow({ data }) {
-  const { date, ticker, dividendPerShare, total, tax, curExchange = 0 } = data;
-  const absTax = Math.abs(tax);
-  const income = total - absTax;
-  const localIncome = income * curExchange;
-  const pit = localIncome * 0.09;
-  const militaryTax = localIncome * 0.05;
-  const totalTax = pit + militaryTax;
-  const netIncome = localIncome - totalTax;
+  const { date, ticker, dividendPerShare, total } = data;
+  const { absTax, income, localIncome, pit, militaryTax, totalTax, netIncome } =
+    calculateTaxes(data);
 
   return (
     <TableRow>
