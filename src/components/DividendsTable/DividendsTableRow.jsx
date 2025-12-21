@@ -4,7 +4,7 @@ import { calculateTaxes } from '@/lib/taxCalculations';
 import React from 'react';
 
 export default function DividendsTableRow({ data }) {
-  const { date, ticker, dividendPerShare, total } = data;
+  const { date, ticker, dividendPerShare, total, curExchange } = data;
   const { absTax, income, localIncome, pit, militaryTax, totalTax, netIncome } =
     calculateTaxes(data);
 
@@ -13,7 +13,9 @@ export default function DividendsTableRow({ data }) {
       <TableCell>{date}</TableCell>
       <TableCell>{ticker}</TableCell>
       <TableCell>{formatNumber(dividendPerShare)}</TableCell>
-      <TableCell>{dividendPerShare ? Math.round(total / dividendPerShare) : 0}</TableCell>
+      <TableCell>
+        {dividendPerShare ? Math.round(total / dividendPerShare) : 0}
+      </TableCell>
       <TableCell>{total}</TableCell>
       <TableCell>{absTax}</TableCell>
       <TableCell>{formatNumber(income)}</TableCell>
