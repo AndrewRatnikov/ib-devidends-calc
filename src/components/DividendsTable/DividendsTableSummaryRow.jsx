@@ -13,12 +13,14 @@ export default function DividendsTableSummaryRow({ summary }) {
         <TableCell colSpan={4}>Total</TableCell>
         <TableCell>{formatNumber(summary.total)}</TableCell>
         <TableCell>{formatNumber(summary.tax)}</TableCell>
+        <TableCell>{formatNumber(summary.etrUsd)}</TableCell>
         <TableCell>{formatNumber(summary.income)}</TableCell>
         <TableCell>{/* curExchange */}</TableCell>
         <TableCell>{formatNumber(summary.localIncome)}</TableCell>
         <TableCell>{formatNumber(summary.pit)}</TableCell>
         <TableCell>{formatNumber(summary.militaryTax)}</TableCell>
         <TableCell>{formatNumber(summary.totalTax)}</TableCell>
+
         <TableCell>{formatNumber(summary.netIncome)}</TableCell>
       </TableRow>
     </TableFooter>

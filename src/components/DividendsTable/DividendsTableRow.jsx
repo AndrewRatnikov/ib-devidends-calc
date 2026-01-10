@@ -8,6 +8,9 @@ export default function DividendsTableRow({ data }) {
   const { absTax, income, localIncome, pit, militaryTax, totalTax, netIncome } =
     calculateTaxes(data);
 
+  // Calculate Effective Tax Rate for USD (US withholding tax)
+  const etrUsd = total > 0 ? (absTax / total) * 100 : 0;
+
   return (
     <TableRow>
       <TableCell>{date}</TableCell>
@@ -18,12 +21,14 @@ export default function DividendsTableRow({ data }) {
       </TableCell>
       <TableCell>{total}</TableCell>
       <TableCell>{absTax}</TableCell>
+      <TableCell>{formatNumber(etrUsd)}</TableCell>
       <TableCell>{formatNumber(income)}</TableCell>
       <TableCell>{formatNumber(curExchange)}</TableCell>
       <TableCell>{formatNumber(localIncome)}</TableCell>
       <TableCell>{formatNumber(pit)}</TableCell>
       <TableCell>{formatNumber(militaryTax)}</TableCell>
       <TableCell>{formatNumber(totalTax)}</TableCell>
+
       <TableCell>{formatNumber(netIncome)}</TableCell>
     </TableRow>
   );

@@ -17,6 +17,8 @@ export default function DividendsTableHeader() {
 
         <TableHead>Tax, $</TableHead>
 
+        <TableHead>ETR USD, %</TableHead>
+
         <TableHead>Net Income, $</TableHead>
 
         <TableHead>usd/uah</TableHead>

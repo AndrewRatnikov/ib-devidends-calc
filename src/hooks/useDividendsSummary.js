@@ -1,15 +1,22 @@
-import { useMemo } from 'react';
 import { calculateTaxes } from '@/lib/taxCalculations';
+import { useMemo } from 'react';
 
 export const useDividendsSummary = (hydratedFileData) => {
   const summary = useMemo(() => {
     if (!hydratedFileData) {
       return null;
     }
-    return hydratedFileData.reduce(
+    const totals = hydratedFileData.reduce(
       (acc, item) => {
-        const { absTax, income, localIncome, pit, militaryTax, totalTax, netIncome } =
-          calculateTaxes(item);
+        const {
+          absTax,
+          income,
+          localIncome,
+          pit,
+          militaryTax,
+          totalTax,
+          netIncome,
+        } = calculateTaxes(item);
 
         acc.total += item.total;
         acc.tax += absTax;
@@ -33,6 +40,13 @@ export const useDividendsSummary = (hydratedFileData) => {
         netIncome: 0,
       },
     );
+
+    // Calculate effective tax rates for summary
+    const etrUsd = totals.total > 0 ? (totals.tax / totals.total) * 100 : 0;
+    return {
+      ...totals,
+      etrUsd,
+    };
   }, [hydratedFileData]);
 
   return summary;
