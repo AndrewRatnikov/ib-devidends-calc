@@ -3,6 +3,7 @@ import KPICards from '@/components/KPICards';
 import { LoadFileForm } from '@/components/LoadFileForm';
 import {
   calculateKPIMetrics,
+  getTickerSummary,
   groupDividendsByMonth,
   groupDividendsByTicker,
 } from '@/lib/helpers';
@@ -24,6 +25,11 @@ export default function DashboardLayout() {
     [fileData],
   );
 
+  const tickerSummaryData = useMemo(
+    () => getTickerSummary(fileData),
+    [fileData],
+  );
+
   const hasData = fileData && fileData.length > 0;
 
   return (
@@ -41,7 +47,7 @@ export default function DashboardLayout() {
       {hasData && (
         <div className="container mx-auto space-y-6 px-4 py-8">
           <KPICards metrics={kpiMetrics} />
-          <DashboardTabs chartData={monthlyData} tickerData={tickerData} />
+          <DashboardTabs chartData={monthlyData} tickerData={tickerData} tickerSummaryData={tickerSummaryData} />
         </div>
       )}
     </>

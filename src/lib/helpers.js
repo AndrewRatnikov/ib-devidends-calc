@@ -339,3 +339,38 @@ export function groupDividendsByTicker(dividends, maxSlices = MAX_SLICES) {
 
   return [...topSlices, { ticker: 'Other', gross: otherTotal }];
 }
+
+/**
+ * Generates a summary of dividends by ticker including gross amount, percentage, and count.
+ * Returns all tickers sorted by gross amount (descending).
+ *
+ * @param {Array} dividends - Array of dividend objects with 'ticker' and 'total' properties
+ * @returns {Array<{ticker: string, gross: number, percent: number, count: number}>} - Summary sorted by gross (descending)
+ */
+export function getTickerSummary(dividends) {
+  if (!dividends || dividends.length === 0) return [];
+
+  const grouped = dividends.reduce((acc, div) => {
+    const ticker = div.ticker || 'Unknown';
+    if (!acc[ticker]) {
+      acc[ticker] = { gross: 0, count: 0 };
+    }
+    acc[ticker].gross += div.total || 0;
+    acc[ticker].count += 1;
+    return acc;
+  }, {});
+
+  const totalGross = Object.values(grouped).reduce(
+    (sum, item) => sum + item.gross,
+    0,
+  );
+
+  return Object.entries(grouped)
+    .map(([ticker, data]) => ({
+      ticker,
+      gross: data.gross,
+      percent: totalGross > 0 ? (data.gross / totalGross) * 100 : 0,
+      count: data.count,
+    }))
+    .sort((a, b) => b.gross - a.gross);
+}

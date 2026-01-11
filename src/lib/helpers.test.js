@@ -5,6 +5,7 @@ import {
   convertOfxToJson,
   extractDividendsFromJson,
   getDateRangeFromFileData,
+  getTickerSummary,
   groupDividendsByMonth,
   groupDividendsByTicker,
   xmlToJson,
@@ -386,5 +387,81 @@ describe('groupDividendsByTicker', () => {
     const result = groupDividendsByTicker(dividends, 9);
     expect(result).toHaveLength(2);
     expect(result.find((r) => r.ticker === 'Other')).toBeUndefined();
+  });
+});
+
+describe('getTickerSummary', () => {
+  it('returns empty array for null/undefined/empty input', () => {
+    expect(getTickerSummary(null)).toEqual([]);
+    expect(getTickerSummary(undefined)).toEqual([]);
+    expect(getTickerSummary([])).toEqual([]);
+  });
+
+  it('calculates gross, percent, and count correctly', () => {
+    const dividends = [
+      { ticker: 'AAPL', total: 100 },
+      { ticker: 'MSFT', total: 300 },
+      { ticker: 'AAPL', total: 100 },
+    ];
+    const result = getTickerSummary(dividends);
+
+    expect(result).toHaveLength(2);
+    expect(result[0]).toEqual({
+      ticker: 'MSFT',
+      gross: 300,
+      percent: 60,
+      count: 1,
+    });
+    expect(result[1]).toEqual({
+      ticker: 'AAPL',
+      gross: 200,
+      percent: 40,
+      count: 2,
+    });
+  });
+
+  it('sorts by gross descending', () => {
+    const dividends = [
+      { ticker: 'A', total: 50 },
+      { ticker: 'B', total: 150 },
+      { ticker: 'C', total: 100 },
+    ];
+    const result = getTickerSummary(dividends);
+
+    expect(result[0].ticker).toBe('B');
+    expect(result[1].ticker).toBe('C');
+    expect(result[2].ticker).toBe('A');
+  });
+
+  it('handles missing ticker as "Unknown"', () => {
+    const dividends = [
+      { total: 100 },
+      { ticker: null, total: 50 },
+      { ticker: 'AAPL', total: 50 },
+    ];
+    const result = getTickerSummary(dividends);
+
+    expect(result).toHaveLength(2);
+    expect(result[0].ticker).toBe('Unknown');
+    expect(result[0].gross).toBe(150);
+    expect(result[0].count).toBe(2);
+  });
+
+  it('calculates correct percentages', () => {
+    const dividends = [
+      { ticker: 'A', total: 25 },
+      { ticker: 'B', total: 75 },
+    ];
+    const result = getTickerSummary(dividends);
+
+    expect(result[0].percent).toBe(75);
+    expect(result[1].percent).toBe(25);
+  });
+
+  it('handles zero total gracefully', () => {
+    const dividends = [{ ticker: 'A', total: 0 }];
+    const result = getTickerSummary(dividends);
+
+    expect(result[0].percent).toBe(0);
   });
 });
