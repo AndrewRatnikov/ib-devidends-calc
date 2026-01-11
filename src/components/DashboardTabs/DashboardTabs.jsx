@@ -8,8 +8,9 @@ import { BarChart3, Table } from 'lucide-react';
  *
  * @param {Object} props - Component props
  * @param {Array<Object>} props.chartData - Monthly dividend data for the chart
+ * @param {Array<Object>} props.tickerData - Ticker dividend data for the pie chart
  */
-export default function DashboardTabs({ chartData }) {
+export default function DashboardTabs({ chartData, tickerData }) {
   return (
     <Tabs defaultValue="visuals" className="w-full">
       <TabsList className="grid w-full max-w-md grid-cols-2">
@@ -24,7 +25,7 @@ export default function DashboardTabs({ chartData }) {
       </TabsList>
 
       <TabsContent value="visuals" className="space-y-4">
-        <DividendsChart data={chartData} />
+        <DividendsChart data={chartData} tickerData={tickerData} />
       </TabsContent>
 
       <TabsContent value="data">

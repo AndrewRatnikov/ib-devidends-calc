@@ -1,7 +1,11 @@
 import DashboardTabs from '@/components/DashboardTabs';
 import KPICards from '@/components/KPICards';
 import { LoadFileForm } from '@/components/LoadFileForm';
-import { calculateKPIMetrics, groupDividendsByMonth } from '@/lib/helpers';
+import {
+  calculateKPIMetrics,
+  groupDividendsByMonth,
+  groupDividendsByTicker,
+} from '@/lib/helpers';
 import { useDividendsStore } from '@/store/useDividendsStore';
 import React, { useMemo } from 'react';
 
@@ -12,6 +16,11 @@ export default function DashboardLayout() {
 
   const monthlyData = useMemo(
     () => groupDividendsByMonth(fileData),
+    [fileData],
+  );
+
+  const tickerData = useMemo(
+    () => groupDividendsByTicker(fileData),
     [fileData],
   );
 
@@ -32,7 +41,7 @@ export default function DashboardLayout() {
       {hasData && (
         <div className="container mx-auto space-y-6 px-4 py-8">
           <KPICards metrics={kpiMetrics} />
-          <DashboardTabs chartData={monthlyData} />
+          <DashboardTabs chartData={monthlyData} tickerData={tickerData} />
         </div>
       )}
     </>

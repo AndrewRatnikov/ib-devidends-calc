@@ -6,6 +6,7 @@ import {
   extractDividendsFromJson,
   getDateRangeFromFileData,
   groupDividendsByMonth,
+  groupDividendsByTicker,
   xmlToJson,
 } from './helpers';
 
@@ -333,5 +334,57 @@ describe('groupDividendsByMonth', () => {
     const result = groupDividendsByMonth(fileData);
 
     expect(result).toEqual([{ month: '2023-05', total: 100 }]);
+  });
+});
+
+describe('groupDividendsByTicker', () => {
+  it('returns empty array for null/undefined input', () => {
+    expect(groupDividendsByTicker(null)).toEqual([]);
+    expect(groupDividendsByTicker(undefined)).toEqual([]);
+    expect(groupDividendsByTicker([])).toEqual([]);
+  });
+
+  it('groups dividends by ticker and sorts by gross descending', () => {
+    const dividends = [
+      { ticker: 'AAPL', total: 100 },
+      { ticker: 'MSFT', total: 200 },
+      { ticker: 'AAPL', total: 50 },
+    ];
+    const result = groupDividendsByTicker(dividends);
+    expect(result).toEqual([
+      { ticker: 'MSFT', gross: 200 },
+      { ticker: 'AAPL', gross: 150 },
+    ]);
+  });
+
+  it('handles missing ticker as "Unknown"', () => {
+    const dividends = [{ total: 100 }, { ticker: null, total: 50 }];
+    const result = groupDividendsByTicker(dividends);
+    expect(result).toEqual([{ ticker: 'Unknown', gross: 150 }]);
+  });
+
+  it('consolidates tickers beyond maxSlices into "Other"', () => {
+    // Create 12 different tickers
+    const dividends = Array.from({ length: 12 }, (_, i) => ({
+      ticker: `TICK${i}`,
+      total: 100 - i * 5, // Descending totals: 100, 95, 90, ...
+    }));
+
+    const result = groupDividendsByTicker(dividends, 9);
+
+    expect(result).toHaveLength(10); // 9 + "Other"
+    expect(result[9].ticker).toBe('Other');
+    // "Other" should contain TICK9, TICK10, TICK11 = 55 + 50 + 45 = 150
+    expect(result[9].gross).toBe(150);
+  });
+
+  it('returns all tickers if count <= maxSlices', () => {
+    const dividends = [
+      { ticker: 'A', total: 10 },
+      { ticker: 'B', total: 20 },
+    ];
+    const result = groupDividendsByTicker(dividends, 9);
+    expect(result).toHaveLength(2);
+    expect(result.find((r) => r.ticker === 'Other')).toBeUndefined();
   });
 });

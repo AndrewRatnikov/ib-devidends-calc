@@ -301,3 +301,41 @@ export function groupDividendsByMonth(fileData) {
     .map(([month, total]) => ({ month, total }))
     .sort((a, b) => a.month.localeCompare(b.month));
 }
+
+const MAX_SLICES = 9;
+
+/**
+ * Groups dividends by ticker and calculates total gross for each.
+ * Returns top 9 tickers by gross amount, with remaining tickers grouped as "Other".
+ * This prevents unreadable charts when users have 20+ tickers.
+ *
+ * @param {Array} dividends - Array of dividend objects
+ * @param {number} [maxSlices=9] - Maximum number of individual ticker slices
+ * @returns {Array<{ticker: string, gross: number}>} - Top N + "Other", sorted by gross (descending)
+ */
+export function groupDividendsByTicker(dividends, maxSlices = MAX_SLICES) {
+  if (!dividends || dividends.length === 0) return [];
+
+  const grouped = dividends.reduce((acc, div) => {
+    const ticker = div.ticker || 'Unknown';
+    acc[ticker] = (acc[ticker] || 0) + (div.total || 0);
+    return acc;
+  }, {});
+
+  const sorted = Object.entries(grouped)
+    .map(([ticker, gross]) => ({ ticker, gross }))
+    .sort((a, b) => b.gross - a.gross);
+
+  // If within limit, return as-is
+  if (sorted.length <= maxSlices) {
+    return sorted;
+  }
+
+  // Take top N and consolidate the rest into "Other"
+  const topSlices = sorted.slice(0, maxSlices);
+  const otherTotal = sorted
+    .slice(maxSlices)
+    .reduce((sum, item) => sum + item.gross, 0);
+
+  return [...topSlices, { ticker: 'Other', gross: otherTotal }];
+}
